@@ -1,0 +1,31 @@
+@import url('https://fonts.googleapis.com/css2?family=Pinyon+Script&display=swap');
+
+:root {
+  --color-bg: #FDF6E2;
+  --color-container: #FDF6E2;
+  --color-red: #a02c2c;
+  --color-red-dark: #8b1a1a;
+  --color-text: #1a1a1a;
+  --font-script: 'Pinyon Script', cursive;
+  --font-serif: 'Times New Roman', Times, serif;
+}
+
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+html {
+  scroll-behavior: smooth;
+}
+
+body {
+  font-family: var(--font-serif);
+  background-color: var(--color-bg);
+  color: var(--color-text);
+  line-height: 1.6;
+  min-height: 100vh;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
