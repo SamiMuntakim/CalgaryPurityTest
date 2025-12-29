@@ -1,70 +1,75 @@
-import { useState } from 'react'
-import './App.css'
-import { questions, getScoreMessage } from './data/questions'
+import { useState } from "react";
+import "./App.css";
+import { questions, getScoreMessage, getSchoolCoding } from "./data/questions";
 
 function App() {
-  const [checkedItems, setCheckedItems] = useState(new Set())
-  const [showResults, setShowResults] = useState(false)
-  const [score, setScore] = useState(0)
+  const [checkedItems, setCheckedItems] = useState(new Set());
+  const [showResults, setShowResults] = useState(false);
+  const [score, setScore] = useState(0);
+  const [schoolCoding, setSchoolCoding] = useState(null);
 
   const handleCheckboxChange = (index) => {
-    const newChecked = new Set(checkedItems)
+    const newChecked = new Set(checkedItems);
     if (newChecked.has(index)) {
-      newChecked.delete(index)
+      newChecked.delete(index);
     } else {
-      newChecked.add(index)
+      newChecked.add(index);
     }
-    setCheckedItems(newChecked)
-  }
+    setCheckedItems(newChecked);
+  };
 
-  const handleSubmit = (e) => {
-    e.preventDefault()
-    const calculatedScore = questions.length - checkedItems.size
-    setScore(calculatedScore)
-    setShowResults(true)
-    window.scrollTo({ top: 0, behavior: 'smooth' })
-  }
+  const handleSubmit = () => {
+    const calculatedScore = questions.length - checkedItems.size;
+    setScore(calculatedScore);
+    setSchoolCoding(getSchoolCoding(checkedItems));
+    setShowResults(true);
+    window.scrollTo({ top: 0, behavior: "smooth" });
+  };
 
   const handleTakeAgain = () => {
-    setCheckedItems(new Set())
-    setShowResults(false)
-    window.scrollTo({ top: 0, behavior: 'smooth' })
-  }
+    setCheckedItems(new Set());
+    setShowResults(false);
+    window.scrollTo({ top: 0, behavior: "smooth" });
+  };
 
   const handleShare = () => {
-    const text = `I scored ${score} on the Calgary Purity Test! How Calgarian are you?`
-    const url = window.location.href
+    const text = `I scored ${score} on the Calgary Purity Test! How Calgarian are you?`;
+    const url = window.location.href;
 
     if (navigator.share) {
-      navigator.share({ title: 'Calgary Purity Test', text, url }).catch(() => {
+      navigator.share({ title: "Calgary Purity Test", text, url }).catch(() => {
         window.open(
-          `https://twitter.com/intent/tweet?text=${encodeURIComponent(text)}&url=${encodeURIComponent(url)}`,
-          '_blank',
-          'width=550,height=420'
-        )
-      })
+          `https://twitter.com/intent/tweet?text=${encodeURIComponent(
+            text
+          )}&url=${encodeURIComponent(url)}`,
+          "_blank",
+          "width=550,height=420"
+        );
+      });
     } else {
       window.open(
-        `https://twitter.com/intent/tweet?text=${encodeURIComponent(text)}&url=${encodeURIComponent(url)}`,
-        '_blank',
-        'width=550,height=420'
-      )
+        `https://twitter.com/intent/tweet?text=${encodeURIComponent(
+          text
+        )}&url=${encodeURIComponent(url)}`,
+        "_blank",
+        "width=550,height=420"
+      );
     }
-  }
+  };
 
   const handleCopyLink = async () => {
     try {
-      await navigator.clipboard.writeText(window.location.href)
-      const btn = document.getElementById('copy-btn')
-      const originalText = btn.textContent
-      btn.textContent = 'Copied!'
+      await navigator.clipboard.writeText(window.location.href);
+      const btn = document.getElementById("copy-btn");
+      const originalText = btn.textContent;
+      btn.textContent = "Copied!";
       setTimeout(() => {
-        btn.textContent = originalText
-      }, 2000)
+        btn.textContent = originalText;
+      }, 2000);
     } catch {
-      alert('Failed to copy link')
+      alert("Failed to copy link");
     }
-  }
+  };
 
   return (
     <>
@@ -82,7 +87,9 @@ function App() {
                   <span></span>
                 </div>
                 <div className="title-main">
-                  Calgary<br />Purity Test
+                  Calgary
+                  <br />
+                  Purity Test
                 </div>
                 <div className="decorative-lines">
                   <span></span>
@@ -92,45 +99,50 @@ function App() {
               </div>
             </header>
 
-            <div className="intro">
-              <p>
-                The Calgary Purity Test is a way for you to measure how much of a true Calgarian you are. Whether you're a lifelong resident or a recent transplant, this test will reveal your authentic Calgary experience.
-              </p>
-              <p className="caution">
-                Caution: this is not a bucket list. Completion is not the goal.
-              </p>
-              <p className="caution-sub">
-                (beware: some of these might be too relatable)
-              </p>
-              <p className="instructions">
-                Click on every item you have done. Your purity score will be calculated at the end.
-              </p>
+            <div className="description">
+              The Calgary Purity Test measures your exposure to Calgary student
+              life. Whether you chose this school or just ended up here, this
+              test will tell you how far gone you are
+            </div>
+            <div className="caution">
+              Caution: this is not a bucket list. Completion is not the goal.
+              <br />
+              (Completion of all items on this test will likely result in
+              academic probation.)
+            </div>
+            <div className="instructions">
+              Click on every item you have done. Your purity score will be
+              calculated at the end.
             </div>
 
-            <form onSubmit={handleSubmit}>
-              <ul className="questions-list">
-                {questions.map((question, index) => (
-                  <li key={index} className="question-item">
-                    <span className="question-number">{index + 1}.</span>
-                    <input
-                      type="checkbox"
-                      id={`q${index}`}
-                      className="question-checkbox"
-                      checked={checkedItems.has(index)}
-                      onChange={() => handleCheckboxChange(index)}
-                    />
-                    <label htmlFor={`q${index}`} className="question-label">
-                      {question}
-                    </label>
-                  </li>
-                ))}
-              </ul>
-              <div className="submit-container">
-                <button type="submit" className="btn btn-primary">
-                  Calculate My Score
-                </button>
-              </div>
-            </form>
+            <div
+              className="question-list"
+              role="group"
+              aria-label="Calgary Purity Test"
+            >
+              {questions.map((question, index) => (
+                <div key={index} className="question">
+                  <div className="question-number">{index + 1}.</div>
+                  <input
+                    type="checkbox"
+                    id={`q${index}`}
+                    name={`q${index}`}
+                    checked={checkedItems.has(index)}
+                    onChange={() => handleCheckboxChange(index)}
+                  />
+                  <label htmlFor={`q${index}`}>{question}</label>
+                </div>
+              ))}
+            </div>
+            <div className="result-section">
+              <button
+                className="calculate-btn"
+                type="button"
+                onClick={handleSubmit}
+              >
+                Calculate My Score
+              </button>
+            </div>
           </section>
         ) : (
           /* Results Section */
@@ -144,7 +156,9 @@ function App() {
                   <span></span>
                 </div>
                 <div className="title-main">
-                  Calgary<br />Purity Test
+                  Calgary
+                  <br />
+                  Purity Test
                 </div>
                 <div className="decorative-lines">
                   <span></span>
@@ -157,7 +171,22 @@ function App() {
             <div className="results-content">
               <h2 className="score-label">Your score:</h2>
               <p className="score-number">{score}</p>
-              <p className="score-message">{getScoreMessage(score, questions.length)}</p>
+              <p className="score-title">
+                {getScoreMessage(score, questions.length).title}
+              </p>
+              <p className="score-message">
+                {getScoreMessage(score, questions.length).description}
+              </p>
+
+              {schoolCoding && (
+                <div className="school-coding">
+                  <p className="coding-title">{schoolCoding.title}</p>
+                  <p className="coding-description">
+                    {schoolCoding.description}
+                  </p>
+                </div>
+              )}
+
               <div className="results-buttons">
                 <button className="btn btn-primary" onClick={handleTakeAgain}>
                   Take again
@@ -165,7 +194,11 @@ function App() {
                 <button className="btn btn-primary" onClick={handleShare}>
                   Share my score
                 </button>
-                <button id="copy-btn" className="btn btn-primary" onClick={handleCopyLink}>
+                <button
+                  id="copy-btn"
+                  className="btn btn-primary"
+                  onClick={handleCopyLink}
+                >
                   Copy link
                 </button>
               </div>
@@ -174,7 +207,7 @@ function App() {
         )}
       </div>
     </>
-  )
+  );
 }
 
-export default App
+export default App;
