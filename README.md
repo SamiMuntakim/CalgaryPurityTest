@@ -28,8 +28,3 @@ Based on the classic Rice Purity Test format, but specifically tailored for UCal
 npm install
 npm run dev
 ```
-
-## Contributing
-
-PRs welcome! If you have ideas for better questions or find bugs, feel free to open an issue.
-
