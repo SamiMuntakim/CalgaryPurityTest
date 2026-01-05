@@ -29,7 +29,7 @@ export const questions = [
   "Opened a grade and dissociated",
   "Watched a recorded lecture at 2x speed the night before the exam",
   "Zoned out for an entire 75-minute lecture",
-  'Opened your laptop to "take notes" and scrolled Reddit instead',
+  'Opened your laptop to "take notes" and did not take any',
   "Walked into the wrong classroom and stayed out of embarrassment",
   "Had a midterm with a class average below 50%",
   "Failed a midterm",
@@ -56,8 +56,8 @@ export const questions = [
   'Pressed the mysterious Earth Science "buttons" with no idea why',
 
   // Section 4: Social Life & The Calgary Experience
-  "Played League of Legends or Valorant during a lecture",
-  "Joined a club solely for free pizza or samosas",
+  "Played League of Legends or Valorant",
+  "Joined a club solely for free food",
   "Shot your shot with a classmate and now avoid eye contact weekly",
   "Pre-drank because downtown prices are criminal",
   "Ended up at Cowboys against your will",
@@ -140,41 +140,6 @@ export const scoreMessages = {
   },
 };
 
-// School coding based on answer patterns
-export const getSchoolCoding = (checkedItems) => {
-  // Count specific question categories
-  let leavesImmediately = 0;
-  let quietSuffering = 0;
-
-  // Questions about leaving immediately and campus complaints
-  if (checkedItems.has(3)) leavesImmediately++; // Went home right after class (The Commuter Classic)
-  if (checkedItems.has(5)) leavesImmediately++; // Complained campus is dead but never joined a club
-
-  // Questions related to UCalgary traits (big lectures, suffering)
-  if (checkedItems.has(85)) quietSuffering++; // Sat in a 400-person lecture and felt completely alone
-  if (checkedItems.has(91)) quietSuffering++; // Accepted suffering as your new normal
-  if (checkedItems.has(93)) quietSuffering++; // Felt like everyone else was faking it too
-
-  if (leavesImmediately >= 1 && quietSuffering < 2) {
-    return {
-      title: "Spiritually MRU-coded",
-      description:
-        "Comfortable clothes. Efficient routines. Leaves immediately after class.",
-    };
-  } else if (quietSuffering >= 2) {
-    return {
-      title: "Spiritually UCalgary-coded",
-      description:
-        "Large lectures. Quiet suffering. Complains constantly. Still shows up.",
-    };
-  } else {
-    return {
-      title: "Spiritually Conflicted",
-      description: "You contain multitudes. Campus cannot define you.",
-    };
-  }
-};
-
 export const getScoreMessage = (score, totalQuestions) => {
   const percentage = (score / totalQuestions) * 100;
 
@@ -183,4 +148,105 @@ export const getScoreMessage = (score, totalQuestions) => {
   if (percentage >= 45) return scoreMessages.weathered;
   if (percentage >= 24) return scoreMessages.tenured;
   return scoreMessages.institutionalized;
+};
+
+// Personality types based on question patterns
+const personalityTypes = {
+  phantomCommuter: {
+    title: "The Phantom Commuter",
+    description:
+      "You treat campus like a drive-thru. In, out, emotionally untouched.",
+    indices: [1, 2, 3, 4, 5, 8, 9, 11, 13],
+  },
+  academicMasochist: {
+    title: "The Academic Masochist",
+    description: "Pain is temporary. Your GPA is forever. You chose suffering.",
+    indices: [
+      17, 18, 19, 21, 22, 23, 24, 28, 29, 30, 31, 32, 33, 34, 35, 88, 92, 95,
+    ],
+  },
+  campusCryptid: {
+    title: "The Campus Cryptid",
+    description:
+      "You've seen things others haven't. The bunnies know your name.",
+    indices: [10, 14, 37, 41, 42, 44, 46, 48, 80],
+  },
+  denRegular: {
+    title: "The Den Regular",
+    description: "Your liver has seen more action than your textbooks.",
+    indices: [52, 53, 54, 56, 60, 62, 77, 78, 79, 81],
+  },
+  tfdlResident: {
+    title: "The TFDL Resident",
+    description: "You've paid more rent in stress than in tuition.",
+    indices: [35, 38, 43, 46, 74, 88],
+  },
+  unhinged: {
+    title: "The Unhinged",
+    description: "Academic integrity is more of a suggestion to you.",
+    indices: [84, 85, 86, 87, 89, 90, 91, 94, 97, 98],
+  },
+  romantic: {
+    title: "The Romantic",
+    description: "You found love in a hopeless place (the lecture hall).",
+    indices: [51, 75, 82, 83, 89],
+  },
+  weatherHardened: {
+    title: "The Weather-Hardened",
+    description: "Calgary weather broke you, then rebuilt you stronger.",
+    indices: [64, 65, 66, 67, 68, 69],
+  },
+  gamer: {
+    title: "The Gamer",
+    description: "Your match history is longer than your assignment list.",
+    indices: [26, 49],
+  },
+};
+
+export const getPersonality = (checkedItems) => {
+  // Special case: if they checked the last question
+  const lastQuestionIndex = questions.length - 1;
+  const checkedLastQuestion = checkedItems.has(lastQuestionIndex);
+
+  // Calculate scores for each personality type
+  let maxScore = 0;
+  let maxMatchCount = 0;
+  let maxType = null;
+
+  for (const [key, type] of Object.entries(personalityTypes)) {
+    const matchCount = type.indices.filter((i) => checkedItems.has(i)).length;
+    const percentage = matchCount / type.indices.length;
+
+    // Update if: higher percentage, OR same percentage but more absolute matches
+    if (matchCount >= 2) {
+      if (
+        percentage > maxScore ||
+        (percentage === maxScore && matchCount > maxMatchCount)
+      ) {
+        maxScore = percentage;
+        maxMatchCount = matchCount;
+        maxType = key;
+      }
+    }
+  }
+
+  // If they checked "would do it again" and have a personality, add optimist flavor
+  if (maxType && checkedLastQuestion) {
+    const personality = personalityTypes[maxType];
+    return {
+      ...personality,
+      title: `${personality.title} (But Would Do It Again)`,
+    };
+  }
+
+  // Return the dominant personality
+  if (maxType) {
+    return personalityTypes[maxType];
+  }
+
+  // Fallback if no strong match
+  return {
+    title: "The Enigma",
+    description: "You contain multitudes. Campus cannot define you.",
+  };
 };

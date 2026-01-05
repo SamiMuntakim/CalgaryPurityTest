@@ -1,12 +1,12 @@
 import { useState } from "react";
 import "./App.css";
-import { questions, getScoreMessage, getSchoolCoding } from "./data/questions";
+import { questions, getScoreMessage, getPersonality } from "./data/questions";
 
 function App() {
   const [checkedItems, setCheckedItems] = useState(new Set());
   const [showResults, setShowResults] = useState(false);
   const [score, setScore] = useState(0);
-  const [schoolCoding, setSchoolCoding] = useState(null);
+  const [personality, setPersonality] = useState(null);
 
   const handleCheckboxChange = (index) => {
     const newChecked = new Set(checkedItems);
@@ -21,7 +21,7 @@ function App() {
   const handleSubmit = () => {
     const calculatedScore = questions.length - checkedItems.size;
     setScore(calculatedScore);
-    setSchoolCoding(getSchoolCoding(checkedItems));
+    setPersonality(getPersonality(checkedItems));
     setShowResults(true);
     window.scrollTo({ top: 0, behavior: "smooth" });
   };
@@ -178,11 +178,12 @@ function App() {
                 {getScoreMessage(score, questions.length).description}
               </p>
 
-              {schoolCoding && (
-                <div className="school-coding">
-                  <p className="coding-title">{schoolCoding.title}</p>
-                  <p className="coding-description">
-                    {schoolCoding.description}
+              {personality && (
+                <div className="personality-section">
+                  <p className="personality-label">Personality:</p>
+                  <p className="personality-title">{personality.title}</p>
+                  <p className="personality-description">
+                    {personality.description}
                   </p>
                 </div>
               )}
