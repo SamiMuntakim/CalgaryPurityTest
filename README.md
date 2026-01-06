@@ -2,7 +2,7 @@
 
 A purity test for University of Calgary students. Find out how "pure" your Calgary student experience has been.
 
-**[Take the test →](https://calgarypuritytest.vercel.app)**
+**[Take the test →](calgarypuritytest.com)**
 
 ## About
 
