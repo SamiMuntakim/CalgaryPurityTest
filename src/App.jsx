@@ -1,6 +1,7 @@
 import { useState } from "react";
 import "./App.css";
 import { questions, getScoreMessage, getPersonality } from "./data/questions";
+import { Analytics } from "@vercel/analytics/react";
 
 function App() {
   const [checkedItems, setCheckedItems] = useState(new Set());
